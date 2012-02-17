@@ -268,6 +268,290 @@
     allgemeines Optimierungsproblem und Lösen mithilfe von Verfahren wie
     <em|Simulated Annealing> (bekannt!)
   </description>
+
+  <section|Kombinatorische Optimierung mittels Flussmethoden>
+
+  Flussmethoden werden in diesem Abschnitt für drei Probleme eingesetzt:
+  Knickminimierung in orthogonalen Layouts, aufwärtsgerichtete Layouts von
+  DAGs und Optimierung der Winkelauflösung in geradlinigen Layouts.
+
+  <subsection|Grundlagen>
+
+  <\description>
+    <item*|Planarität>Ein Graph ist planar, falls er eine planare Einbettung
+    besitzt. Eine solche Einbettung zerlegt die Ebene in Facetten.
+
+    Eine <strong|kombinatorische Einbettung> ist eine Darstellung einer
+    planaren Einbettung als Adjazenzlisten, in denen die Kanten gemäÿ der
+    Einbettung zyklisch (z.B.<space|1spc>im Gegenuhrzeigersinn) abgelegt
+    sind.
+
+    Jeder planare Graph hat eine geradlinige planare Einbettung.
+
+    <item*|Euler-Formel>Für einen zusammenhängenden planaren Graphen erfüllt
+    jede seiner Einbettungen die Formel
+
+    <\equation*>
+      <around*|\||V|\|>-<around*|\||E|\|>+f=2
+    </equation*>
+
+    wobei <math|f> die Anzahl der Facetten ist.
+
+    <item*|Klassisches <math|s>-<math|t>-Flussmodell>Ein Flussnetzwerk
+    besteht aus einem gerichteten Graphen mit Kantenkapazitäten und
+    ausgezeichneten Knoten <math|s> (Quelle) und <math|t> (Senke). (<math|s>
+    und <math|t> dürfen beide ein- und ausgehende Kanten haben!)
+
+    Ein <em|Fluss> ist eine Abbildung von Kanten auf (Fluss-)Werte in
+    <math|\<bbb-R\><rsub|0><rsup|+>>, die folgende Bedingungen erfüllt:
+
+    <\description>
+      <item*|Kapazität>Der Flusswert einer Kante muss <math|\<gtr\>0> sein
+      und <math|\<leqslant\>> der Kantenkapazität sein
+
+      <item*|Flusserhaltung>Die Summe der ein- und ausgehenden Flüsse eines
+      Knotens (auÿer <math|s> und <math|t>) muss 0 sein.
+    </description>
+
+    Der <em|Wert> eines Flusses ist der Überschuss der Quelle bzw. das
+    Defizit der Senke. Ziel ist es, einen Fluss mit maximalem Wert zu finden
+    (Max-Flow-Problem).
+
+    Der maximale Wert eines <math|s>-<math|t>-Flusses ist gleich der
+    minimalen Kapazität eines <math|s>-<math|t>-Schnittes (Klassisches
+    Dualitätsresultat)
+
+    <item*|Allgemeines Flussmodell>Es gibt keine Quelle und Senke mehr.
+    Kanten haben untere und obere Kapazitäten und es existiert eine
+    Knotenbewertungsfunktion <math|b:V\<longrightarrow\>\<bbb-R\>>, sodass
+    sich die Bewertungen aller Knoten zu 0 summieren.
+
+    Knoten mit <math|b\<gtr\>0> heiÿen Quellen, Knoten mit <math|b\<less\>0>
+    heiÿen Senken.
+
+    <\description>
+      <item*|Kapazität>Der Flusswert einer Kante muss innerhalb der
+      Kapazitäten liegen.
+
+      <item*|Flusserhaltung>Die Summe der ein- und ausgehenden Flüsse eines
+      Knotens entspricht genau seiner Bewertung.
+    </description>
+
+    <em|Allgemeines Flussproblem>: Finde einen zulässigen Fluss
+
+    <em|MinCostFlow>: Finde einen zulässigen Fluss mit minimalen Kosten
+    bezüglich einer Kostenfunktion, die jeder Kante einen Kostenwert
+    zuordnet. Die Kosten eines Flusses sind definiert als
+    <math|cost<around*|(|X|)>=<big-around|\<sum\>|<rsub|<around*|(|i,j|)>\<in\>E>cost<around*|(|i,j|)>\<cdot\>X<around*|(|i,j|)>>>.
+
+    MinCostFlow kann in <math|O<around*|(|n<rsup|3/2>|)>> gelöst werden.
+  </description>
+
+  <subsection|Knickminimierung in orthogonalen Layouts>
+
+  Wir betrachten hier natürlich nur Graphen mit maximalem Knotengrad 4.
+
+  <\description>
+    <item*|Allgemeine Knickminimierung>Das Problem, ein knickminimales
+    orthogonales Layout eines Graphen mit Maximalgrad 4 zu finden, ist
+    <math|\<cal-N\>\<cal-P\>>-schwer.
+
+    <item*|Knickminimierung mit fester Einbettung>Lässt sich effizient lösen.
+    Gegeben sind ein planarer Graph und seine kombinatorische Einbettung,
+    gegeben durch die Facetten <math|\<cal-F\>> und die äuÿere Facette
+    <math|f<rsub|0>\<in\>\<cal-F\>>.
+
+    <item*|Ansatz>Topology (Finden einer kombinatorischen Einbettung) --
+    Shape (Finden einer orthogonalen Beschreibung) -- Metrics
+    (Flächenminimierung)
+
+    <item*|Verfahren von Tamassia>Zweistufiges Verfahren:
+
+    <\enumerate>
+      <item>Berechne eine <em|orthogonale Beschreibung> mit minimaler
+      Knickanzahl (mittels Flussmethoden)
+
+      <item><em|Kompaktierung> der Beschreibung zu einem Layout (ebenfalls
+      mittels Flussmethoden)
+    </enumerate>
+
+    <item*|Orthogonale Beschreibung>Besteht aus einer Folge von
+    Facettenbeschreibungen. Eine Facette wird beschrieben durch die
+    Auflistung ihrer Randkanten, die Knicke dieser Randkanten sowie die
+    Knickwinkel an den Knoten.
+
+    <item*|Flussnetzwerk für die orthogonale Beschreibung>Flusseinheiten
+    entsprechen 90-Grad-Winkeln. Die Knoten sind die Knoten des Graphen sowie
+    die Knoten des Dualgraphen, wobei Kanten wie folgt verlaufen:
+
+    <\itemize>
+      <item>Knoten-Facetten-Kante: wenn Knoten zu Facette inzident ist
+
+      Diese Kanten haben Kosten 0 und Kapazitätseinschränkung
+      <math|<around*|[|1,4|]>>.
+
+      <item>Facetten-Facetten-Kante: wenn Facetten benachbart sind (durch
+      gemeinsame Kante)
+
+      Diese Kanten haben Kosten 1 und Kapazitätseinschränkung
+      <math|<around*|[|0,\<infty\>|)>>. Eine Flusseinheit auf einer solchen
+      Kante entspricht einem Knick auf der zugehörigen \RDualkante`` im
+      Ausgangsgraphen, somit wird hierdurch die Knickanzahl minimiert.
+    </itemize>
+
+    <item*|Kompaktierung>Zur gegebenen orthogonalen Beschreibung soll ein
+    orthogonales Layout gefunden werden, das diese Beschreibung realisiert.
+
+    Wenn alle Facetten in der orthogonalen Beschreibung <em|Rechtecke> sind,
+    kann sogar für das konstruierte Layout <em|minimale Gesamtkantenlänge>
+    und <em|minimale Fläche> garantiert werden.
+
+    (Falls alle Facetten Rechtecke sind, sind alle Knicke Ecken der äuÿeren
+    Facette. Auÿerdem kann ein korrektes Layout konstruiert werden, wenn die
+    gegenüberliegenden Seiten für alle Facetten die gleiche Länge zugewiesen
+    bekommen.)
+
+    <item*|Flussnetzwerke für die Kompaktierung>Für jede Richtung (horizontal
+    und vertikal) ein Flussnetzwerk. Die Knoten sind die inneren Facetten
+    sowie zwei Knoten <math|s> und <math|t> auf der äuÿeren Facette und zwei
+    Knoten sind miteinander verbunden, wenn die Facetten ein gemeinsames
+    Kantensegment besitzen (spezielle Regelung für <math|s> und <math|t>,
+    siehe Skript).
+
+    Der Wert des MinCostFlows im horizontalen Netzwerk ist gleich der Breite,
+    im vertikalen Netzwerk gleich der Höhe des entsprechenden Layouts. Die
+    Summe der Kosten von <math|x> in beiden Netzwerken entspricht der
+    Gesamtkantenlänge des Layouts
+
+    <item*|Erweiterung auf den allgemeinen Fall>Verfeinerung des Graphen
+    durch Hinzufügen von Knoten und Kanten, sodass ein Graph mit einer
+    orthogonalen Beschreibung entsteht, in der alle Facetten Rechtecke sind.
+
+    Dabei wird für jeden Knick in der orthogonalen Beschreibung ein
+    Dummy-Knoten eingefügt und die orthogonale Beschreibung entsprechend
+    verändert.
+
+    Das Flussnetzwerk garantiert jetzt <em|nicht >mehr minimale
+    Gesamtkantenlänge und Fläche! Das Problem, ob sich ein allgemeiner Graph
+    auf ein Gitter mit gegebener Fläche zeichnen lässt, ist
+    <math|\<cal-N\>\<cal-P\>>-schwer.
+
+    <item*|Erweiterungsmöglichkeiten>
+
+    <\description>
+      <item*|Umgehung der Gradbeschränkung>Ersetzen von Knoten mit hohem Grad
+      durch einen \RRing``
+
+      <item*|Nicht-planare Graphen>Einbetten und Ersetzen von Kreuzungen
+      druch Dummy-Knoten
+    </description>
+  </description>
+
+  <subsection|Aufwärtsgerichtete planare Layouts>
+
+  <\description>
+    <item*|Aufwärtsplanarer Graph>Ein DAG heiÿt aufwärtsplanar, falls es eine
+    planare Einbettung dieses Graphen gibt, bei dem alle Kanten aufwärts
+    gerichtet sind (d.h.<space|1spc>durch eine monoton steigende Kurve
+    dargestellt sind).
+
+    <item*|<math|s>-<math|t>-Graph>Ein DAG heiÿt <math|s>-<math|t>-Graph,
+    wenn er eine Quelle <math|s> (nur ausgehende Kanten) und eine Senke
+    <math|t> (nur eingehende Kanten) besitzt sowie die Kante
+    <math|<around*|(|s,t|)>> enthält.
+
+    <item*|Test auf Aufwärtsplanarität>Der Test, ob ein Graph eine
+    aufwärtsplanare Einbettung besitzt, ist
+    <math|\<cal-N\>\<cal-P\>>-vollständig.
+
+    <item*|Charakterisierung aufwärtsplanarer Graphen>Für einen gerichteten
+    Graphen <math|G> sind äquivalent:
+
+    <\enumerate>
+      <item><math|G> ist aufwärtsplanar
+
+      <item><math|G> hat ein geradliniges aufwärtsplanares Layout
+
+      <item><math|G> ist aufspannender Subgraph eines planaren
+      <math|s>-<math|t>-Graphen, d.h.<space|1spc><math|G> kann durch
+      Hinzufügen einer oder mehrerer Kanten zu einem planaren
+      <math|s>-<math|t>-Graphen gemacht werden.
+    </enumerate>
+
+    <item*|Test auf Aufwärtsplanarität mit vorgegebener Einbettung>Ist die
+    (kombinatorische) Einbettung vorgegeben, dann kann in Polynomialzeit
+    geprüft werden, ob es dazu ein aufwärtsplanares Layout gibt.
+
+    <item*|Bimodalität>Ein eingebetteter gerichteter Graph heiÿt
+    <em|bimodal>, falls jeder Knoten bimodal ist, d.h.<space|1spc>falls die
+    Folge seiner inzidenten Kanten (bzgl.<space|1spc>Einbettung) sich in
+    höchstens zwei Teilfolgen aufteilen lässt, sodass die eine Teilfolge nur
+    aus eingehenden und die andere nur aus ausgehenden Kanten besteht.
+
+    Bimodalität ist <em|notwendige Bedingung> für Aufwärtsplanarität, aber
+    nicht hinreichend. Hinreichende Bedingung ist Bimodalität + Existenz von
+    konsistenter Facettenzuordnung <math|\<Phi\>>.
+
+    <item*|Facettenzuordnung <math|\<Phi\>>>Gegeben: DAG mit kombinatorischer
+    Einbettung, äuÿere Facette nicht festgelegt. Eine Abbildung
+    <math|\<Phi\>>, die jeder Quelle und jeder Senke aus <math|V> eine
+    Facette zuordnet, heiÿt konsistent bezüglich <math|h\<in\>\<cal-F\>>,
+    falls gilt:
+
+    <\equation*>
+      <around*|\||\<Phi\><rsup|-1><around*|(|f|)>|\|>=<choice|<tformat|<table|<row|<cell|A<around*|(|f|)>-1,>|<cell|f\<in\>\<cal-F\>\<setminus\><around*|{|h|}>>>|<row|<cell|A<around*|(|f|)>+1,>|<cell|f=h>>>>>
+    </equation*>
+
+    Dabei bezeichnet <math|A<around*|(|f|)>> die Anzahl der Winkel zwischen
+    zwei eingehenden Kanten an <math|f> (gleich der Anzahl der Winkel
+    zwischen zwei ausgehenden Kanten an <math|f>).
+
+    <math|\<Phi\>> ist konsistent, falls sie bezüglich irgendeines
+    <math|h\<in\>\<cal-F\>> konsistent ist.
+
+    <item*|Test auf Aufwärtsplanarität>Gegeben ein eingebetteter, bimodaler,
+    planarer DAG. Es kann in <math|O<around*|(|<around*|\||V|\|>\<cdot\>r|)>>
+    getestet werden, ob er aufwärtsplanar ist (wobei <math|r> die Anzahl der
+    Quellen und Senken in dem Graphen ist).
+  </description>
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
+
+  \;
 </body>
 
 <\initial>
@@ -281,6 +565,10 @@
     <associate|auto-1|<tuple|1|?>>
     <associate|auto-2|<tuple|2|?>>
     <associate|auto-3|<tuple|3|?>>
+    <associate|auto-4|<tuple|4|?>>
+    <associate|auto-5|<tuple|4.1|?>>
+    <associate|auto-6|<tuple|4.2|?>>
+    <associate|auto-7|<tuple|4.3|?>>
   </collection>
 </references>
 
@@ -294,6 +582,10 @@
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Kräftebasierte
       Verfahren> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-2><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Globale
+      und lokale Optimierung> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
