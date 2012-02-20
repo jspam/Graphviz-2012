@@ -600,7 +600,143 @@
     ist (optimal wäre <math|<frac|2*\<pi\>|d<rsub|max><around*|(|G|)>>>).
   </description>
 
-  \;
+  <section|Lagenlayouts>
+
+  <\description>
+    <item*|Ziele bei Lagenlayouts>Gegeben ein gerichteter Graph:
+
+    <\itemize>
+      <item>Kanten sollen möglichst aufwärts gerichtet sein
+
+      <item>Kreuzungen sollen minimiert werden
+
+      <item>Kanten sollen möglichst vertikal und möglichst geradlinig sein
+
+      <item>Knoten sollen gleichmäÿig verteilt sein
+
+      <item>Lange Kanten sollen vermieden werden
+    </itemize>
+
+    Diese Kriterien widersprechen einander zum Teil!
+
+    <item*|Sugiyama-Framework>Die Methode von Sugiyama besteht aus vier
+    Schritten:
+
+    <\description>
+      <item*|1. Entfernen von Zyklen>Finde eine minimale Anzahl zu
+      entfernender Kanten (Minimum Feedback Arc Set) und drehe deren Richtung
+      um
+
+      <item*|2. Lagenzuordnung>Berechne eine Zuordnung der Knoten auf Lagen.
+      Füge Dummy-Knoten so ein, dass Kanten nur noch Knoten
+      aufeinanderfolgender Lagen verbinden
+
+      <item*|3. Kreuzungsreduktion>Reduziere die Anzahl der Kreuzungen
+      zwischen Lagen
+
+      <item*|4. Knoten-/Kantenpositionierung>Berechne die
+      <math|x>-Koordinaten der Knoten so, dass keine Überlappungen entstehen.
+      Füge Kanten ein, entferne Dummy-Knoten und stelle ursprüngliche
+      Kantenrichtung wieder her.
+    </description>
+
+    <item*|1. Zyklenentfernung>Die folgenden Probleme sind äquivalent und
+    <math|\<cal-N\>\<cal-P\>>-schwer:
+
+    <\description>
+      <item*|Maximal azyklischer Subgraph>Finde azyklischen aufspannenden
+      Subgraph mit maximaler Kantenanzahl.
+
+      <item*|Minimum Feedback Arc Set>Finde minimale Teilmenge der Kanten,
+      sodass der Graph nach Entfernen dieser Kanten azyklisch ist.
+
+      <item*|Lineare Anordnung>Finde eine Anordnung der Knoten so, dass
+      möglichst wenige Kanten in die \Rfalsche`` Richtung zeigen.
+    </description>
+
+    <item*|Greedy-Algoritmus für die Zyklenentfernung>Betrachte Knoten in
+    beliebiger Reihenfolge. Füge entweder eingehender oder ausgehende Kanten
+    zu <math|A<rprime|'>> hinzu (je nachdem, welche der Mengen gröÿer ist)
+    und lösche den Knoten.
+
+    Der Graph mit der Kantenmenge <math|A<rprime|'>> ist zyklenfrei.
+
+    Die Laufzeit ist in <math|O<around*|(|n+m|)>>, aber <math|A<rprime|'>>
+    hat nur mindestens <math|<around*|\||A|\|>/2> viele Kanten.
+
+    <item*|Besserer Greedy-Algorithmus>Greedy-Heuristik von Eades et al.
+    Wiederhole, solange noch Knoten im Graphen vorhanden sind:
+
+    <\enumerate>
+      <item>Füge alle eingehenden Knoten von Senken zu <math|A<rprime|'>>
+      hinzu
+
+      <item>Entferne alle isolierten Knoten
+
+      <item>Füge alle ausgehenden Kanten von Quellen zu <math|A<rprime|'>>
+      hinzu
+
+      <item>Wenn Knotenmenge nicht leer ist, füge Knoten mit maximalem
+      Überschuss an ausgehenden Kanten hinzu.
+    </enumerate>
+
+    Die Laufzeit ist in <math|O<around*|(|n+m|)>> und <math|A<rprime|'>> hat
+    mindestens <math|<around*|\||A|\|>/2+<around*|\||V|\|>/6> viele Kanten.
+
+    <item*|Andere Methoden zur Zyklenentfernung>Randomisierte Methoden,
+    Exakte Methode via Linear-Ordering Polytope + Cutting-Plane method
+
+    <item*|2. Lagenzuordnung>Ein DAG sei gegeben. Finde Lagenzuordnung
+    (d.h.<space|1spc>Partition der Knotenmenge in Lagen), sodass Kanten nur
+    zu höheren Lagen verlaufen
+
+    <item*|Minimierung der Höhe>Die Höhenminimierung ohne weitere
+    Einschränkungen ist leicht; man muss nur die <em|transitive Reduktion>
+    des Graphen berechnen (\RAbkürzungen`` zwischen zwei Knoten werden
+    entfernt)
+
+    <item*|Minimierung der Höhe bei vorgegebener Breite>Dieses Problem ist
+    äquivalent zu \RScheduling mit Vorgängerbedingungen``, das
+    <math|\<cal-N\>\<cal-P\>>-vollständig ist, selbst bei Jobs mit
+    Einheitsdauern und 3 Maschinen (Reduktion von CLIQUE).
+
+    Es ist auÿerdem nicht approximierbar mit
+    <math|\<cal-R\><rsub|\<cal-A\>>\<leqslant\><frac|4|3>>, selbst wenn alle
+    Jobs Dauer 1 haben. Es gibt jedoch einen polynomialen
+    Approximationsalgorithmus mit <math|\<cal-R\><rsub|A>\<leqslant\>2-<frac|1|B>>,
+    wobei <math|B> die Anzahl der Maschinen ist. Dieser Algorithmus ist
+    greedy und ordnet einer Maschine den ersten verfügbaren Job zu, wenn
+    diese frei ist.
+
+    <item*|3. Kreuzungsminimierung>Betrachte eingeschränktes Problem
+    <em|Zwei-Lagen-Kreuzungsminimierung> (Bipartite Crossing Number), das
+    <math|\<cal-N\>\<cal-P\>>-schwer ist, selbst wenn die Knotenreihenfolge
+    auf der zweiten Lage fest ist (Reduktion von Feedback Arc Set).
+
+    <item*|Einseitige Kreuzungsminimierung>Diverse Heuristiken:
+
+    <\description>
+      <item*|Baryzenter-Heuristik><math|x>-Koordinate eines Knotens in Layer
+      2 ist durchschnittliche <math|x>-Koordinate der Nachbarn in Layer 1
+
+      Schnell, gute Ergebnisse; liefert kreuzungsfreie Layouts, falls
+      möglich; <math|O<around*|(|<sqrt|n>|)>>-Approximation
+
+      <item*|Median-Heuristik>Genauso, aber mit Median der Nachbarn.
+
+      Schnell; liefert kreuzungsfreie Layouts, falls möglich;
+      Faktor-3-Approximation
+
+      <item*|Greedy-Switch>Vertausche iterativ jeweils benachbarte Knoten,
+      falls dadurch weniger Kreuzungen entstehen.
+
+      Laufzeit <math|O<around*|(|<around*|\||V<rsub|2>|\|>|)>> pro Iteration,
+      maximal <math|<around*|\||V<rsub|2>|\|>> Iterationen
+      <math|\<Rightarrow\>> Post-Processing für andere Heuristiken
+    </description>
+
+    sowie exakte Modellierung als ILP.
+  </description>
 
   \;
 
@@ -650,6 +786,7 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
+    <associate|auto-10|<tuple|6|?>>
     <associate|auto-2|<tuple|2|?>>
     <associate|auto-3|<tuple|3|?>>
     <associate|auto-4|<tuple|4|?>>
@@ -691,6 +828,14 @@
       <with|par-left|<quote|1.5fn>|Aufwärtsgerichtete planare Layouts
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-7>>
+
+      <with|par-left|<quote|1.5fn>|Winkelauflösung in geradlinigen Layouts
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Lagenlayouts>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-9><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
