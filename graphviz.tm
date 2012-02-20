@@ -456,8 +456,8 @@
     dargestellt sind).
 
     <item*|<math|s>-<math|t>-Graph>Ein DAG heiÿt <math|s>-<math|t>-Graph,
-    wenn er eine Quelle <math|s> (nur ausgehende Kanten) und eine Senke
-    <math|t> (nur eingehende Kanten) besitzt sowie die Kante
+    wenn er genau eine Quelle <math|s> (nur ausgehende Kanten) und genau eine
+    Senke <math|t> (nur eingehende Kanten) besitzt sowie die Kante
     <math|<around*|(|s,t|)>> enthält.
 
     <item*|Test auf Aufwärtsplanarität>Der Test, ob ein Graph eine
@@ -513,7 +513,94 @@
     planarer DAG. Es kann in <math|O<around*|(|<around*|\||V|\|>\<cdot\>r|)>>
     getestet werden, ob er aufwärtsplanar ist (wobei <math|r> die Anzahl der
     Quellen und Senken in dem Graphen ist).
+
+    Dazu wird ein Flussnetzwerk konstruiert, das aus den Quellen und Senken
+    des Graphen sowie aus den Facetten besteht. Die Quellen und Senken des
+    Graphen sind Quellen des Flussnetzwerks mit Bedarf 1, die Facetten sind
+    Senken des Flussnetzwerks mit Bedarf <math|-<around*|(|A<around*|(|f|)>-1|)>>
+    für <math|\<cal-F\>\<setminus\><around*|{|f<rsub|0>|}>> und
+    <math|-<around*|(|A<around*|(|f<rsub|0>|)>|)>+1> für <math|f<rsub|0>>.
+    Kanten verlaufen von Quellen-/Senken-Knoten zu adjazenten Facettenknoten.
+
+    Das Netzwerk hat genau dann einen Fluss von Wert <math|r>, wenn eine
+    konsistente Abbildung <math|\<Phi\>> existiert. Diese wird genau durch
+    die Kanten des Flussnetzwerkes mit Flusswert 1 induziert.
+
+    <item*|Konstruktion eines <math|s>-<math|t>-Graphen>Konstruiert werden
+    soll ein <math|s>-<math|t>-Graph, der den gegebenen aufwärtsplanaren
+    Graphen als Subgraphen enthält, bei gegebener konsistenter Abbildung
+    <math|\<Phi\>>.
+
+    Idee: Verfeinern der Facetten, bis jede Facette nur noch zu zwei Winkeln
+    adjazent ist.
+
+    Laufzeit: <math|O<around*|(|n|)>>
   </description>
+
+  <subsection|Winkelauflösung in geradlinigen Layouts>
+
+  <\description>
+    <item*|Gesuchtes>Gegeben sei ein planarer Graph. Finde eine geradlinige
+    planare Einbettung, in welcher der minimal vorkommende Winkel maximal
+    ist.
+
+    Dieses Problem ist <math|\<cal-N\>\<cal-P\>>-schwer; wir beschränken uns
+    daher auf die Variante mit vorgegebener Einbettung.
+
+    <item*|Flussnetzwerk>Die Konstruktion ist ähnlich wie bei der
+    Knickminimierung in orthogonalen Layouts. Die Flusseinheiten entsprechen
+    beliebigen Winkeln. Die Knoten des Netzwerks sind die Knoten und Facetten
+    des Eingabegraphen. Kanten verbinden zueinander adjazente Knoten und
+    Facetten.
+
+    Die Knoten des Graphen entsprechen den Quellen, jeweils mit Bedarf
+    <math|2\<pi\>>. Die Facetten entsprechen den Senken, mit Bedarf
+    <math|-<around*|(|d<rsub|G><around*|(|f|)>-2|)>*\<pi\>>, falls
+    <math|f\<neq\>f<rsub|0>>, und <math|-<around*|(|d<rsub|G><around*|(|f|)>+2|)>*\<pi\>>
+    sonst.
+
+    <item*|Lokalkonsistenz <math|\<neq\>> realisierbares Layout>Ein gültiger
+    Fluss im Netzwerk liefert eine lokal-konsistente Winkelzuweisung. Es gibt
+    aber Graphen mit lokal-konsistenter Winkelzuweisung, für die kein Layout
+    konstruiert werden kann.
+
+    <item*|Planare Dreiecksgraphen>Ein planarer Dreiecksgraph ist ein Graph,
+    dessen Facetten (bis auf die äuÿere Facette) Dreiecke sind.
+
+    Für einen planaren Dreiecksgraphen mit gegebener Winkelzuweisung gibt es
+    genau dann eine geradlinige Einbettung mit dieser Winkelzuweisung, wenn
+
+    <\enumerate>
+      <item>für alle Knoten <math|v> die Summe der Flusswerte auf zu <math|v>
+      inzidenten Knoten-Facetten-Kanten <math|2\<pi\>> beträgt
+
+      <item>für alle inneren Facetten <math|f> die Summe der Flusswerte auf
+      zu <math|f> inzidenten Knoten-Facetten-Kanten <math|\<pi\>> beträgt
+
+      <item>für alle <math|v>, die nicht zu <math|f<rsub|0>> inzident sind,
+      das Produkt der Winkelverhältnisse auf dem Rad um <math|v<rsub|>>
+      gleich 1 ist
+
+      <item>für alle <math|v>, die zu <math|f<rsub|0>> inzident sind, die
+      Summe der Flusswerte auf zu <math|v> inzidenten Knoten-Facetten-Kanten
+      (auÿer zu <math|f<rsub|0>>) kleiner oder gleich <math|\<pi\>> ist.
+    </enumerate>
+
+    <item*|Untere Schranken für die Winkelauflösung>Eine untere Schranke für
+    die Winkelauflösung erhält man mittels binärer Suche über die untere
+    Schranke der Flusswerte im Flussnetzwerk.
+
+    Da die Eigenschaft der Lokalkonsistenz notwendig für ein korrektes Layout
+    ist, ist der dabei erhaltene minimale Winkel eine obere Schranke für die
+    optimale Winkelauflösung.
+
+    <strong|Satz:> In einem triangulierten planar eingebetteten Graph gibt es
+    im zugehörigen Netzwerk einen Fluss, dessen minimaler Kantenwert
+    <math|x<rsub|min>\<geqslant\><frac|\<pi\>|3\<cdot\><around*|(|d<rsub|max><around*|(|G|)>-1|)>>>
+    ist (optimal wäre <math|<frac|2*\<pi\>|d<rsub|max><around*|(|G|)>>>).
+  </description>
+
+  \;
 
   \;
 
@@ -569,6 +656,8 @@
     <associate|auto-5|<tuple|4.1|?>>
     <associate|auto-6|<tuple|4.2|?>>
     <associate|auto-7|<tuple|4.3|?>>
+    <associate|auto-8|<tuple|4.4|?>>
+    <associate|auto-9|<tuple|5|?>>
   </collection>
 </references>
 
@@ -586,6 +675,22 @@
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Globale
       und lokale Optimierung> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Kombinatorische
+      Optimierung mittels Flussmethoden> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|Grundlagen
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5>>
+
+      <with|par-left|<quote|1.5fn>|Knickminimierung in orthogonalen Layouts
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-6>>
+
+      <with|par-left|<quote|1.5fn>|Aufwärtsgerichtete planare Layouts
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7>>
     </associate>
   </collection>
 </auxiliary>
