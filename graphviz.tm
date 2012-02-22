@@ -738,7 +738,130 @@
     sowie exakte Modellierung als ILP.
   </description>
 
-  \;
+  <section|Teile und herrsche>
+
+  \RTeile und herrsche`` zerlegt ein Problem rekursiv in leicht zu lösende
+  Teilprobleme, die dann zusammengesetzt werden. Anwendungen sind hier
+  Binärbäume und serien-parallele Graphen.
+
+  <subsection|Binärbäume>
+
+  <\description>
+    <item*|Baum, Wurzelbaum, Binärbaum>Ein Baum ist ein zusammenhängender,
+    azyklischer Graph. In einem Wurzelbaum ist ein Knoten als Wurzel
+    ausgezeichnet. In einem Binärbaum hat jeder Knoten höchstens zwei Kinder.
+
+    <item*|Geradliniges Layout, Gitterlayout>Ein geradliniges Layout ist
+    durch Angabe der Koordinaten der Knoten eindeutig bestimmt. Ein Layout
+    mit ausschlieÿlich ganzzahligen Koordinaten heiÿt auch Gitterlayout.
+
+    Wir fordern zusätzlich ein kreuzungsfreies Aufwärtslayout.
+
+    <item*|Binärbaumlayout>Folgende Eigenschaften verlangen wir: geradlinig,
+    tiefengeschichtet, kreuzungsfrei, Knoten derselben Tiefe haben Abstand
+    <math|\<geqslant\>> 2, Knoten sind über ihren Nachfolgern zentriert,
+    linke/rechte Nachfolger liegen strikt links/rechts von ihren Vorgängern,
+    <em|identische Teilbäume sind gleich ausgelegt.>
+
+    <item*|Einfaches Gitterlayout>Durchläuft man die Knoten eines Binärbaums
+    in pre-, post- oder inorder-Reihenfolge
+    <math|v<rsub|1>,\<ldots\>,v<rsub|n>>, so erhält man in Linearzeit ein
+    kreuzungsfreies Gitterlayout durch
+
+    <\equation*>
+      x<around*|(|v<rsub|i>|)>\<assign\>i\<nocomma\>,y<around*|(|v<rsub|i>|)>=-tiefe<around*|(|v<rsub|i>|)>
+    </equation*>
+
+    Nachteile:
+
+    <\enumerate>
+      <item>Layouts haben immer die Breite <math|n-1>
+
+      <math|\<Rightarrow\>> Breitenminimierung von Binärbaumlayouts ist
+      <math|\<cal-N\>\<cal-P\>>-schwer! (Reduktion von 3SAT)
+
+      <item>Kanten können Länge <math|\<Theta\><around*|(|n|)>> haben
+
+      Knoten sind i.A.<space|1spc>nicht über ihren Nachfolgern zentriert.
+
+      <math|\<Rightarrow\>> Berechnung relativer statt absoluter Koordinaten
+      sowie Bounding Boxes, dann Zentrieren des Knotens über seinen
+      Nachfolgern. Immer noch in <math|O<around*|(|n|)>>, aber auch noch
+      unnötig breit.
+
+      <math|\<Rightarrow\>> <strong|Algorithmus von Reingold und Tilford>:
+      Berücksichtigt Konturen der Teilbäume. Zwei Durchläufe des Baumes: in
+      postorder (um Konturen und <math|x>-Offsets zu bestimmn), dann in
+      preorder (um aus den <math|x>-Offsets durch Akkumulation
+      <math|x>-Koordinaten zu bestimmen). Gesamtzeit in
+      <math|O<around*|(|n|)>>.
+    </enumerate>
+
+    <item*|<math|h v>-Repräsentation>Kanten zu Nachfolgern verlaufen immer
+    entweder horizontal oder vertikal. Rechtslastiges <math|h v>-Layout
+    (platziert gröÿeren Teilbaum rechts, nicht einbettungserhaltend)
+    garantiert Flächenschranke von <math|O<around*|(|n*log n|)>>, analog
+    \Runtenlastiges`` Layout.
+
+    <item*|Kreislayouts>Jeder Knoten des Binärbaumlayouts wird auf einen
+    Kreis platziert, dessen Radius proportional zur Tiefe des Knotens ist.
+    Der Anteil eines Teilbaums am Kreisumfang ist proportional zur Anzahl
+    seiner Knoten.
+
+    Allerdings muss der zur Verfügung gestellte Kreisumfang beschränkt
+    werden, um ein kreuzungsfreies Layout garantieren zu können.
+  </description>
+
+  <subsection|Serien-parallele Graphen>
+
+  <\description>
+    <item*|Definition>Ein gerichteter Graph heiÿt serien-parallel, falls er
+    aus einer gerichteten Kante besteht oder die serielle/parallele
+    Komposition zweier serien-paralleler Graphen ist.
+
+    Jeder serien-parallele Graph ist azyklisch und planar.
+
+    Die Erkennung und Dekomposition (SPQR-Baum enthält keine R-Knoten)
+    erfolgt in Linearzeit.
+
+    <item*|Layouts haben exponentielle Fläche>Für allgemeine serien-parallele
+    Graphen benötigt man im schlechtesten Fall ein Gitter der Gröÿe
+    <math|\<Omega\><around*|(|4<rsup|n>|)>>.
+
+    Für linkslastige serien-parallele Graphen (Q-Knoten kommen im
+    Dekompositionsbaum nur als rechte Nachfolger von P-Knoten vor) kann
+    mittels eines Teile-und-Herrsche-Algorithmus ein Layout der Gröÿe
+    <math|O<around*|(|n<rsup|2>|)>> erzeugt werden (Platzierung auf
+    rechtwinkligem Dreieck).
+
+    <item*|Sichtbarkeitsrepräsentation>Serien-parallele Graphen lassen sich
+    in Sichtbarkeitsrepräsentationen visualisieren (einmaliger
+    postorder-Durchlauf durch den Dekompositionsbaum).
+
+    <item*|Automorphismen>Die in einem kreuzungsfreien Aufwärtslayout durch
+    Symmetrien darstellbare Untergruppe der Automorphismengruppe
+    (<math|\<pi\><rsub|v>> vertikale Spiegelung, <math|\<pi\><rsub|h>>
+    horizontale Spiegelung, <math|\<pi\><rsub|p>> Punktspiegelung, <math|id>
+    Identität) eines serien-parallelen Graphen ist eine von:
+
+    <\itemize>
+      <item><math|<around*|{|id|}>>
+
+      <item><math|<around*|{|id,\<pi\>|}>> mit
+      <math|\<pi\>\<in\><around*|{|\<pi\><rsub|v>,\<pi\><rsub|h>,\<pi\><rsub|p>|}>>
+
+      <item><with|mode|math|<around*|{|id\<nocomma\>,\<pi\><rsub|v>,\<pi\><rsub|h>,\<pi\><rsub|p>|}>>
+    </itemize>
+
+    <item*|Bestimmen eines symmetrischen Layouts>Umordnung eines
+    serien-parallelen Graphen, sodass maximal viele vertikale Symmetrien
+    seiner Teilgraphen realisiert werden können:
+
+    Kanonisierung des Dekompositionsbaumes (durch Kontraktion maximaler
+    zusammenhängender Mengen von S- bzw. P-Knoten), danach Zuweisung einer
+    Kodierung sodass gilt: Zwei Komponenten derselben Tiefe haben dieselbe
+    Kodierung <math|\<Leftrightarrow\>> Komponenten sind isomorph.
+  </description>
 
   \;
 
@@ -787,6 +910,8 @@
   <\collection>
     <associate|auto-1|<tuple|1|?>>
     <associate|auto-10|<tuple|6|?>>
+    <associate|auto-11|<tuple|6.1|?>>
+    <associate|auto-12|<tuple|6.2|?>>
     <associate|auto-2|<tuple|2|?>>
     <associate|auto-3|<tuple|3|?>>
     <associate|auto-4|<tuple|4|?>>
