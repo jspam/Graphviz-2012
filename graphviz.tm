@@ -863,7 +863,32 @@
     Kodierung <math|\<Leftrightarrow\>> Komponenten sind isomorph.
   </description>
 
-  \;
+  <section|Inkrementelle Konstruktion>
+
+  Statt wie im vorherigen Kapitel immer gröÿere Teillayouts zusammenzusetzen,
+  wird hier ein Ausgangslayout Stück für Stück erweitert.
+
+  Dabei ist die Reihenfolge oftmals von groÿer Bedeutung.
+
+  <\description>
+    <item*|Berechnen von zweifachen Zusammenhangskomponenten>Algorithmus von
+    Tarjan:
+
+    <\enumerate>
+      <item>Berechne Lowpoints
+
+      Der Lowpoint <math|v> von <math|u> ist derjenige Knoten, der von allen
+      Nachfolgern von <math|u> mit der gröÿten Tiefe im Tiefensuchbaum.
+
+      <item>Benutzer Lowpoint-Information, um Zusammenhangsinformationen zu
+      berechnen.
+
+      Dabei hilfreich: Jeder Knoten <math|v>, der nicht die Wurzel ist, ist
+      genau dann ein Separatorknoten, wenn ein Kindknoten <math|y> von
+      <math|v> existiert, sodass <math|lowpoint<around*|(|y|)>\<geqslant\>
+      tiefe<around*|(|v|)>>.
+    </enumerate>
+  </description>
 
   \;
 
@@ -912,6 +937,7 @@
     <associate|auto-10|<tuple|6|?>>
     <associate|auto-11|<tuple|6.1|?>>
     <associate|auto-12|<tuple|6.2|?>>
+    <associate|auto-13|<tuple|7|?>>
     <associate|auto-2|<tuple|2|?>>
     <associate|auto-3|<tuple|3|?>>
     <associate|auto-4|<tuple|4|?>>
