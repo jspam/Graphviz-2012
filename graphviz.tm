@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.10>
 
 <style|generic>
 
@@ -870,6 +870,10 @@
 
   Dabei ist die Reihenfolge oftmals von groÿer Bedeutung.
 
+  Der hier vorgestellte Algorithmus berechnet eine orthogonale Zeichnung.
+  Dazu werden die zweifachen Zusammenhangskomponenten berechnet, iterativ
+  layoutet und dann das Layout des Gesamtgraphen rekursiv berechnet.
+
   <\description>
     <item*|Berechnen von zweifachen Zusammenhangskomponenten>Algorithmus von
     Tarjan:
@@ -888,6 +892,41 @@
       <math|v> existiert, sodass <math|lowpoint<around*|(|y|)>\<geqslant\>
       tiefe<around*|(|v|)>>.
     </enumerate>
+
+    <item*|Layout der zweifachen Zusammenhangskomponente>Benutze
+    <strong|<math|s>-<math|t>-Ordnung>, d.h.<space|1spc>eine Knotenordnung
+    <math|s:=v<rsub|1>,v<rsub|2>,\<ldots\>,v<rsub|n>=:t>, <math|s\<neq\>t>,
+    sodass <math|s> die einzige Quelle und <math|t> die einzige Senke ist.
+    Ist <math|G> ein zweifach zusammenhängender Graph dann existiert zu jeder
+    Kante <math|<around*|(|s,t|)>> eine <math|s>-<math|t>-Ordnung.
+
+    Eine <strong|<math|s>-<math|t>-Orientierung> (bipolar orientation) eines
+    Graphen ist eine Kantenorientierung, sodass der resultierende Graph
+    azyklisch ist und <math|s> die einzige Quelle sowie <math|t> die einzige
+    Senke sind. Ein Graph hat eine <math|s>-<math|t>-Ordnung genau dann, wenn
+    er eine <math|s>-<math|t>-Orientierung hat.
+
+    Wir berechnen eine <math|s>-<math|t>-Orientierung aus einer
+    <strong|Ohrenzerlegung>.
+
+    Ein Ohr ist ein einfacher Pfad oder Kreis im Graphen. Ein Ohr heiÿt
+    offen, falls es kein Kreis ist. Eine (offene) Ohrenzerlegung ist eine
+    Folge von (offenen) Ohren, sodass die Kantenmengen eine Partition der
+    Kantenmenge des Graphen bilden und \<less\>TODO\<gtr\>
+
+    <item*|Orthogonales Layout aus <math|s>-<math|t>-Ordnung>Mittels eines
+    iterativen Verfahrens kann ein orthogonales Layout aus einer
+    <math|s>-<math|t>-Ordnung gewonnen werden (beginnend mit der Quelle). Die
+    benötigte Gittergröÿe ist höchstens <math|<around*|(|m-n+1|)>\<cdot\>n>.
+    Insgesamt gibt es höchstens <math|2*m-2*n+4> Knicke, und keine Kante hat
+    mehr als zwei Knicke (es sei denn, <math|G> ist ein Oktaeder).
+
+    <item*|Algorithmus für allgemeine Graphen>Ist <math|G> ein einfach
+    zusammenhängender Graph mit Maximalgrad 4. Dann kann <math|G> auf einem
+    Gitter der Gröÿe <math|n\<cdot\>n> mit höchstens 2 Knicken pro Kante
+    eingebettet werden.
+
+    <item*|Gitterlayouts für planare Graphen>
   </description>
 
   \;
@@ -987,6 +1026,22 @@
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Lagenlayouts>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9><vspace|0.5fn>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Teile
+      und herrsche> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-10><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|Binärbäume
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-11>>
+
+      <with|par-left|<quote|1.5fn>|Serien-parallele Graphen
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-12>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Inkrementelle
+      Konstruktion> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
